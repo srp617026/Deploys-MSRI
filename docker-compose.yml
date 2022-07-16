@@ -1,0 +1,31 @@
+version: '3.1'
+
+services:
+
+  reverse-proxy:
+    image: jwilder/nginx-proxy:alpine
+    container_name: Reverse-Proxy
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  portal:
+    image: nginx
+    container_name: Portal
+    restart: always
+    environment:
+      - VIRTUAL_HOST=portal.midomino.com
+    volumes:
+      - /storage/nginx/portal:/usr/share/nginx/html:ro
+
+  erp:
+    image: httpd
+    container_name: ERP
+    restart: always
+    environment:
+      - VIRTUAL_HOST=erp.midomino.com
+    volumes:
+      - /storage/apache/erp:/usr/local/apache2/htdocs
