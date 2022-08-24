@@ -3,41 +3,66 @@ version: '3.1'
 services:
 
   reverse-proxy:
-    image: jwilder/nginx-proxy:alpine
+    image: nginxproxy/nginx-proxy:alpine
     container_name: Reverse-Proxy
     restart: always
     ports:
       - 80:80
       - 443:443
+    environment:
+      - LETSENCRYPT_HOST=portal-saul.ddns.net
+      - LETSENCRYPT_EMAIL=saul_romo@hotmail.com
     volumes:
       - /volumes/nginx/certs:/etc/nginx/certs:ro
       - /volumes/nginx/vhostd:/etc/nginx/vhost.d
-      - /volumes/nginx/config/settings.conf:/etc/nginx/conf.d/custom_settings.conf:ro
+      - /volumes/nginx/html:/usr/share/nginx/html:rw
       - /var/run/docker.sock:/tmp/docker.sock:ro
 
-  portal:
-    image: nginx
-    container_name: Portal
+  lets-encrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    container_name: 'Lets-Encrypt'
     restart: always
     environment:
-      - VIRTUAL_HOST=portal-antonio.ddns.net
+      - NGINX_PROXY_CONTAINER=Reverse-Proxy
+      - VIRTUAL_HOST=portal-saul.ddns.net
+      - VIRTUAL_PATH=/.well-known
+    volumes:
+      - /volumes/nginx/certs:/etc/nginx/certs
+      - /volumes/nginx/vhostd:/etc/nginx/vhost.d
+      - /volumes/nginx/html:/usr/share/nginx/html:rw
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+portal:
+    image: nginx
+    restart: always
+    environment:
+      - VIRTUAL_HOST=portal-saul.ddns.net
+      - VIRTUAL_PATH=/
+      - VIRTUAL_DEST=/
+      - LETSENCRYPT_HOST=portal-saul.ddns.net
+      - LETSENCRYPT_EMAIL=saul_romo@hotmail.com
     volumes:
       - /volumes/www/portal:/usr/share/nginx/html:ro
 
-  factura:
+factura:
     image: nginx
-    container_name: Factura
     restart: always
     environment:
-      - VIRTUAL_HOST=factura-saul.ddns.net
+      - VIRTUAL_HOST=portal-saul.ddns.net
+      - VIRTUAL_PATH=/facturas
+      - VIRTUAL_DEST=/
+      - LETSENCRYPT_HOST=portal-saul.ddns.net
+      - LETSENCRYPT_EMAIL=saul_romo@hotmail.com
     volumes:
       - /volumes/www/factura:/usr/share/nginx/html:ro
-
-  erp:
+erp:
     image: httpd
-    container_name: ERP
     restart: always
     environment:
-      - VIRTUAL_HOST=erp-antonio.ddns.net
+      - VIRTUAL_HOST=portal-saul.ddns.net
+      - VIRTUAL_PATH=/erp
+      - VIRTUAL_DEST=/
+      - LETSENCRYPT_HOST=apps-antonio.ddns.net
+      - LETSENCRYPT_EMAIL=saul_romo@hotmail.com
     volumes:
       - /volumes/www/erp:/usr/local/apache2/htdocs
