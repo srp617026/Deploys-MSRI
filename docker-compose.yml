@@ -49,7 +49,7 @@ factura:
     restart: always
     environment:
       - VIRTUAL_HOST=portal-saul.ddns.net
-      - VIRTUAL_PATH=/facturas
+      - VIRTUAL_PATH=/facturas #factura?
       - VIRTUAL_DEST=/
       - LETSENCRYPT_HOST=portal-saul.ddns.net
       - LETSENCRYPT_EMAIL=saul_romo@hotmail.com
@@ -62,7 +62,7 @@ erp:
       - VIRTUAL_HOST=portal-saul.ddns.net
       - VIRTUAL_PATH=/erp
       - VIRTUAL_DEST=/
-      - LETSENCRYPT_HOST=apps-antonio.ddns.net
+      - LETSENCRYPT_HOST=portal-saul.ddns.net
       - LETSENCRYPT_EMAIL=saul_romo@hotmail.com
     volumes:
       - /volumes/www/erp:/usr/local/apache2/htdocs
