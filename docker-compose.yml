@@ -10,8 +10,8 @@ services:
       - 80:80
       - 443:443
     environment:
-      - LETSENCRYPT_HOST=portal-saul.ddns.net
-      - LETSENCRYPT_EMAIL=saul_romo@hotmail.com
+      - VIRTUAL_HOST=portal-saul.ddns.net
+      - VIRTUAL_PATH=/.well-known
     volumes:
       - /volumes/nginx/certs:/etc/nginx/certs:ro
       - /volumes/nginx/vhostd:/etc/nginx/vhost.d
@@ -24,8 +24,6 @@ services:
     restart: always
     environment:
       - NGINX_PROXY_CONTAINER=Reverse-Proxy
-      - VIRTUAL_HOST=portal-saul.ddns.net
-      - VIRTUAL_PATH=/.well-known
     volumes:
       - /volumes/nginx/certs:/etc/nginx/certs
       - /volumes/nginx/vhostd:/etc/nginx/vhost.d
@@ -38,7 +36,6 @@ services:
     environment:
       - VIRTUAL_HOST=portal-saul.ddns.net
       - VIRTUAL_PATH=/
-      - VIRTUAL_DEST=/
       - LETSENCRYPT_HOST=portal-saul.ddns.net
       - LETSENCRYPT_EMAIL=saul_romo@hotmail.com
     volumes:
